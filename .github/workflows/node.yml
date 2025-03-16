@@ -79,8 +79,13 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST << 'EOF'
             # Pull the latest Docker image
             docker pull praveendshankar0502/react-app:latest
+                      # Stop the current container (if running)
+            docker stop praveendshankar0502/react-app:latest || true
+            
+            # Remove the old container (if exists)
+            docker rm praveendshankar0502/react-app:latest || true
             
             # Run the new container
-            docker run -d --name reactapp praveendshankar0502/react-app:latest
+            docker run -d -p 3000:80 --name reactapp praveendshankar0502/react-app:latest
           EOF
 
