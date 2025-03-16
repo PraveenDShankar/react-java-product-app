@@ -28,12 +28,12 @@ jobs:
     
     - name: Build Java project
         run: |
-          cd backend  # Change to your Java app directory
-          ./mvnw clean package -DskipTests  # Assuming you're using Maven
+          cd backend  
+          ./mvnw clean package -DskipTests  
 
       - name: Build Docker image for Java
         run: |
-          cd backend  # Change to your Java app directory
+          cd backend  
           docker build -t 
 praveendshankar0502/javareact-app:latest .
 
@@ -61,3 +61,20 @@ praveendshankar0502/javareact-app:latest .
       - name: Push React Docker image
         run: |
           docker push praveendshankar0502/react-app:latest
+
+      - name: Deploy to EC2
+        env:
+          HOST: ${{ secrets.EC2_HOST }}
+          USER: ${{ secrets.EC2_USER }}
+          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_NAME }}
+          IMAGE_TAG: ${{ secrets.DOCKER_IMAGE_TAG }}
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << 'EOF'
+            docker pull $IMAGE_NAME:$IMAGE_TAG
+            docker stop my_container || true
+            docker rm my_container || true
+            docker run -d --name my_container -p 3000:80 $IMAGE_NAME:$IMAGE_TAG
+          EOF
