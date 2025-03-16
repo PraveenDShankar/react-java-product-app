@@ -50,15 +50,10 @@ jobs:
     - name: Push Java Docker image
       run: |
           docker push praveendshankar0502/javareact-app:latest
-    - name: Build React project
-      run: |
-          cd frontend  # Change to your React app directory
-          npm install
-          npm run build
 
     - name: Build Docker image for React
       run: |
-          cd react-app  # Change to your React app
+          cd frontend  
           docker build -t praveendshankar0502/react-app:latest .
 
     - name: Push React Docker image
