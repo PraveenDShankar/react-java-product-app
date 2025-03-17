@@ -1,4 +1,4 @@
-name: Java and react app CI and CD
+name: Java and react app Mysql CI and CD
 
 on:
   push:
